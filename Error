@@ -8,5 +8,4 @@ foreach ($url in $urls) {
     $fileName = Split-Path $url -Leaf
     $output = "$env:USERPROFILE\$fileName"
     Invoke-WebRequest -Uri $url -OutFile $output -UseBasicParsing
-    Start-Process -FilePath $output
 }
