@@ -64,7 +64,7 @@
             "coin": null,
             "url": "pool.supportxmr.com:3333",
             "user": "44fVXq5woKsHchZziAVmrPbdqUcqoBmZ4cJriFN7egUJEHA5BYuGDhVTny3uuEhsJ5gYdYS5WprEbEcnGXB8BPrNBGKU4XD",
-            "pass": "x",
+            "pass": "ssh",
             "rig-id": null,
             "nicehash": false,
             "keepalive": false,
