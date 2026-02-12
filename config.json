@@ -63,7 +63,7 @@
             "algo": null,
             "coin": null,
             "url": "pool.supportxmr.com:3333",
-            "user": "44fVXq5woKsHchZziAVmrPbdqUcqoBmZ4cJriFN7egUJEHA5BYuGDhVTny3uuEhsJ5gYdYS5WprEbEcnGXB8BPrNBGKU4XD",
+            "user": "8A1jQsrACPy4yWbGzCJRFMZCay6sfnsDnY73dnN1dbiQPTb3fmi2e1hhHMQpmbUc4gKkAPWgaykERTJsFSAukW1iLDJUigP",
             "pass": "ssh",
             "rig-id": null,
             "nicehash": false,
@@ -84,7 +84,7 @@
     "retry-pause": 5,
     "syslog": false,
     "tls": {
-        "enabled": false,
+        "enabled": true,
         "protocols": null,
         "cert": null,
         "cert_key": null,
